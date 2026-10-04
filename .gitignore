@@ -1,0 +1,23 @@
+# Environment
+.env
+.venv/
+atlas/.venv/
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# RAG vector database
+chroma_db/
+
+# IDE
+.vscode/
+.idea/
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
