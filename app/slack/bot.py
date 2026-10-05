@@ -1,5 +1,7 @@
 import os
+import threading
 
+import uvicorn
 from dotenv import load_dotenv
 from slack_bolt import App
 from slack_bolt.adapter.socket_mode import SocketModeHandler
@@ -53,12 +55,32 @@ def handle_app_mention(event, say, logger):
         )
 
 
+def run_fastapi():
+    """Run the HTTP server required by Cloud Run."""
+    port = int(os.environ.get("PORT", "8080"))
+
+    uvicorn.run(
+        "app.main:app",
+        host="0.0.0.0",
+        port=port,
+    )
+
+
 if __name__ == "__main__":
 
+    # Start FastAPI in the background.
+    threading.Thread(
+        target=run_fastapi,
+        daemon=True,
+    ).start()
+
+    print("⚡️ FastAPI server started!")
+    print("⚡️ Bolt app is running!")
+
+    # Keep Slack Socket Mode running.
     handler = SocketModeHandler(
         app,
         os.environ["SLACK_APP_TOKEN"],
     )
 
     handler.start()
-
